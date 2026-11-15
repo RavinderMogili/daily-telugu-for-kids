@@ -4,7 +4,7 @@ Updated 2026-11-15, branch `feature/picture-activities`.
 
 ## Baseline
 
-Lovable export (TanStack Start + bun), cleaned at commit 03a8a88.
+TanStack Start + bun app (exported UI-builder project), cleaned at the initial commit.
 Local-only: localStorage progress, no backend, no accounts.
 
 ## Implemented in this branch

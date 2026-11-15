@@ -9,7 +9,7 @@ Updated 2026-11-15.
 
 - `.output/public/` - static assets (pages, audio, css)
 - `.output/server/` - nitro server (Cloudflare-targeted default; the
-  Lovable vite config injects nitro with a Cloudflare worker target and
+  the vite config injects nitro with a Cloudflare worker target and
   generates `.output/server/wrangler.json` + `.wrangler/deploy/config.json`)
 
 So the export is wired for Cloudflare Workers/Pages style deployment, or
