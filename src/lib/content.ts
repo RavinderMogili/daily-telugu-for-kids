@@ -1,5 +1,6 @@
 import { QUIZ_RULES, type Difficulty } from "./config";
 import { addDays, daysBetween } from "./date";
+import { audioFiles } from "./audioManifest";
 
 export type Review = { status: "draft-needs-native-review" | "reviewed"; source: string };
 const ORIGINAL: Review = {
@@ -59,8 +60,13 @@ export const LETTERS: Letter[] = [
   ["ర", "ra"],
   ["ల", "la"],
   ["వ", "va"],
-].map(([te, tr]) => ({ te: te!, tr: tr! }));
-const W = (te: string, tr: string, en: string): Word => ({ te, tr, en });
+].map(([te, tr]) => ({ te: te!, tr: tr!, ...(audioFiles[te!] ? { audio: audioFiles[te!] } : {}) }));
+const W = (te: string, tr: string, en: string): Word => ({
+  te,
+  tr,
+  en,
+  ...(audioFiles[te] ? { audio: audioFiles[te] } : {}),
+});
 export const WORDS: Word[] = [
   W("అమ్మ", "amma", "mother"),
   W("ఆవు", "aavu", "cow"),
@@ -291,3 +297,74 @@ export const STORIES: Story[] = [
 /** Padyalu are listed only once their text and reuse details are verified. */
 export const PADYALU: Story[] = [];
 export const lookupWord = (t: string) => WORDS.find((w) => w.te === t.replace(/[.,!?]/g, ""));
+
+/**
+ * Small picture vocabulary for the visual activities on /pictures.
+ *
+ * image is an original SVG illustration drawn for this app, stored in
+ * public/pictures/ (see docs/ASSETS.md). It renders identically on all
+ * devices and carries no visible label during questions.
+ * tiles is a REVIEWED array of Telugu akshara/syllable tiles (vowel
+ * signs and ottulu preserved) whose join must equal word.te — never
+ * derive tiles by splitting the string, that breaks conjuncts like ల్లు.
+ *
+ * reading flags prerequisite difficulty: "L1-plain" means every tile is a
+ * plain consonant/achchu readable at L1; "L3-gunintha" means the word
+ * needs vowel signs or ottulu that are only formally taught at L3, so the
+ * reading activities exceed strict L1 prerequisites (listening mode is
+ * still fine — it needs no reading). This is annotated per word, not
+ * inferred from correct spelling.
+ */
+export type PictureWord = {
+  id: string;
+  word: Word;
+  image: string;
+  tiles: string[];
+  reading: "L1-plain" | "L3-gunintha";
+  review: Review;
+};
+const P = (
+  te: string,
+  image: string,
+  tiles: string[],
+  reading: PictureWord["reading"],
+): PictureWord => ({
+  id: `pic:${te}`,
+  word: WORDS.find((w) => w.te === te)!,
+  image,
+  tiles,
+  reading,
+  review: ORIGINAL,
+});
+export const PICTURE_WORDS: PictureWord[] = [
+  P("ఆవు", "/pictures/cow.svg", ["ఆ", "వు"], "L3-gunintha"),
+  P("ఇల్లు", "/pictures/house.svg", ["ఇ", "ల్లు"], "L3-gunintha"),
+  P("ఎలుక", "/pictures/mouse.svg", ["ఎ", "లు", "క"], "L3-gunintha"),
+  P("ఒంటె", "/pictures/camel.svg", ["ఒం", "టె"], "L3-gunintha"),
+  P("కలం", "/pictures/pen.svg", ["క", "లం"], "L3-gunintha"),
+  P("గడియారం", "/pictures/clock.svg", ["గ", "డి", "యా", "రం"], "L3-gunintha"),
+  P("పాలు", "/pictures/milk.svg", ["పా", "లు"], "L3-gunintha"),
+  P("పడవ", "/pictures/boat.svg", ["ప", "డ", "వ"], "L1-plain"),
+];
+
+/** Distinct emoji options for picture-choice questions. */
+export function pictureOptions(answer: PictureWord, count = 4, seed = ""): PictureWord[] {
+  const others = shuffle(
+    PICTURE_WORDS.filter((p) => p.id !== answer.id),
+    seed + answer.id,
+  );
+  return shuffle([answer, ...others.slice(0, count - 1)], seed + answer.id + "o");
+}
+
+/**
+ * Tiles for Build the word: the reviewed tiles plus a few distractor tiles
+ * drawn from other picture words, shuffled. Joining the chosen tiles must
+ * reproduce the word exactly.
+ */
+export function buildTiles(p: PictureWord, seed = ""): string[] {
+  const distract = shuffle(
+    PICTURE_WORDS.filter((x) => x.id !== p.id).flatMap((x) => x.tiles),
+    seed + p.id,
+  ).filter((t) => !p.tiles.includes(t));
+  return shuffle([...p.tiles, ...distract.slice(0, 2)], seed + p.id + "t");
+}

@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AudioReviewRouteImport } from './routes/audio-review'
 import { Route as LibraryRouteImport } from './routes/library'
+import { Route as PicturesRouteImport } from './routes/pictures'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as ProgressRouteImport } from './routes/progress'
@@ -22,9 +24,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AudioReviewRoute = AudioReviewRouteImport.update({
+  id: '/audio-review',
+  path: '/audio-review',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PicturesRoute = PicturesRouteImport.update({
+  id: '/pictures',
+  path: '/pictures',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PracticeRoute = PracticeRouteImport.update({
@@ -55,7 +67,9 @@ const TodayRoute = TodayRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/audio-review': typeof AudioReviewRoute
   '/library': typeof LibraryRoute
+  '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
   '/profiles': typeof ProfilesRoute
   '/progress': typeof ProgressRoute
@@ -64,7 +78,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/audio-review': typeof AudioReviewRoute
   '/library': typeof LibraryRoute
+  '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
   '/profiles': typeof ProfilesRoute
   '/progress': typeof ProgressRoute
@@ -74,7 +90,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/audio-review': typeof AudioReviewRoute
   '/library': typeof LibraryRoute
+  '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
   '/profiles': typeof ProfilesRoute
   '/progress': typeof ProgressRoute
@@ -85,7 +103,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/audio-review'
     | '/library'
+    | '/pictures'
     | '/practice'
     | '/profiles'
     | '/progress'
@@ -94,7 +114,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/audio-review'
     | '/library'
+    | '/pictures'
     | '/practice'
     | '/profiles'
     | '/progress'
@@ -103,7 +125,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/audio-review'
     | '/library'
+    | '/pictures'
     | '/practice'
     | '/profiles'
     | '/progress'
@@ -113,7 +137,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AudioReviewRoute: typeof AudioReviewRoute
   LibraryRoute: typeof LibraryRoute
+  PicturesRoute: typeof PicturesRoute
   PracticeRoute: typeof PracticeRoute
   ProfilesRoute: typeof ProfilesRoute
   ProgressRoute: typeof ProgressRoute
@@ -130,11 +156,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/audio-review': {
+      id: '/audio-review'
+      path: '/audio-review'
+      fullPath: '/audio-review'
+      preLoaderRoute: typeof AudioReviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library': {
       id: '/library'
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pictures': {
+      id: '/pictures'
+      path: '/pictures'
+      fullPath: '/pictures'
+      preLoaderRoute: typeof PicturesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/practice': {
@@ -177,7 +217,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AudioReviewRoute: AudioReviewRoute,
   LibraryRoute: LibraryRoute,
+  PicturesRoute: PicturesRoute,
   PracticeRoute: PracticeRoute,
   ProfilesRoute: ProfilesRoute,
   ProgressRoute: ProgressRoute,
