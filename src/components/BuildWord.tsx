@@ -80,6 +80,7 @@ export function BuildWord({
           placed.map((t, k) => (
             <button
               key={k}
+              disabled={complete}
               onClick={() => setPlaced(placed.filter((_, x) => x !== k))}
               aria-label={`Remove ${tiles[t]}`}
               className="te rounded-lg bg-card px-3 py-2 text-3xl font-bold ring-1 ring-border active:scale-95"
@@ -125,8 +126,9 @@ export function BuildWord({
             v="s"
             className="flex-1"
             onClick={() => {
+              // Clear tiles but keep `attempted`: a retried word is never a
+              // first attempt, so a later correct build earns no point.
               setPlaced([]);
-              setAttempted(false);
             }}
           >
             Try again

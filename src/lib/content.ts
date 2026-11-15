@@ -7,7 +7,8 @@ const ORIGINAL: Review = {
   status: "draft-needs-native-review",
   source: "Original content written for this app",
 };
-export type Letter = { te: string; tr: string; audio?: string };
+export type LetterKind = "vowel" | "consonant" | "sign" | "conjunct";
+export type Letter = { te: string; tr: string; kind: LetterKind; audio?: string };
 export type Word = { te: string; tr: string; en: string; audio?: string };
 export type Day = {
   day: number;
@@ -31,36 +32,73 @@ export type Question = {
 /** First published day; each later day publishes one day after. */
 export const LAUNCH_DATE = "2026-11-09";
 
+/**
+ * Alphabet catalogue in traditional varnamala order, with an explicit
+ * `kind` on every entry — never split this array by position. DAYS picks
+ * the teaching order; the catalogue only describes what exists.
+ * Independent vowels include ఋ; అం/అః are vowel+sign forms; క్ష is the
+ * standard taught conjunct. Doubled forms (మ్మ, ల్లు) are taught through
+ * words, not as separate letters. Rare historical forms (ౠ, ఌ, ౡ) are
+ * deliberately omitted pending a documented inclusion policy.
+ */
 export const LETTERS: Letter[] = [
-  ["అ", "a"],
-  ["ఆ", "aa"],
-  ["ఇ", "i"],
-  ["ఈ", "ii"],
-  ["ఉ", "u"],
-  ["ఊ", "uu"],
-  ["ఎ", "e"],
-  ["ఏ", "ee"],
-  ["ఐ", "ai"],
-  ["ఒ", "o"],
-  ["ఓ", "oo"],
-  ["ఔ", "au"],
-  ["క", "ka"],
-  ["గ", "ga"],
-  ["చ", "cha"],
-  ["జ", "ja"],
-  ["ట", "Ta"],
-  ["డ", "Da"],
-  ["త", "ta"],
-  ["ద", "da"],
-  ["న", "na"],
-  ["ప", "pa"],
-  ["బ", "ba"],
-  ["మ", "ma"],
-  ["య", "ya"],
-  ["ర", "ra"],
-  ["ల", "la"],
-  ["వ", "va"],
-].map(([te, tr]) => ({ te: te!, tr: tr!, ...(audioFiles[te!] ? { audio: audioFiles[te!] } : {}) }));
+  ["అ", "a", "vowel"],
+  ["ఆ", "aa", "vowel"],
+  ["ఇ", "i", "vowel"],
+  ["ఈ", "ii", "vowel"],
+  ["ఉ", "u", "vowel"],
+  ["ఊ", "uu", "vowel"],
+  ["ఋ", "ru", "vowel"],
+  ["ఎ", "e", "vowel"],
+  ["ఏ", "ee", "vowel"],
+  ["ఐ", "ai", "vowel"],
+  ["ఒ", "o", "vowel"],
+  ["ఓ", "oo", "vowel"],
+  ["ఔ", "au", "vowel"],
+  ["క", "ka", "consonant"],
+  ["ఖ", "kha", "consonant"],
+  ["గ", "ga", "consonant"],
+  ["ఘ", "gha", "consonant"],
+  ["ఙ", "nga", "consonant"],
+  ["చ", "cha", "consonant"],
+  ["ఛ", "chha", "consonant"],
+  ["జ", "ja", "consonant"],
+  ["ఝ", "jha", "consonant"],
+  ["ఞ", "nya", "consonant"],
+  ["ట", "Ta", "consonant"],
+  ["ఠ", "Tha", "consonant"],
+  ["డ", "Da", "consonant"],
+  ["ఢ", "Dha", "consonant"],
+  ["ణ", "Na", "consonant"],
+  ["త", "ta", "consonant"],
+  ["థ", "tha", "consonant"],
+  ["ద", "da", "consonant"],
+  ["ధ", "dha", "consonant"],
+  ["న", "na", "consonant"],
+  ["ప", "pa", "consonant"],
+  ["ఫ", "pha", "consonant"],
+  ["బ", "ba", "consonant"],
+  ["భ", "bha", "consonant"],
+  ["మ", "ma", "consonant"],
+  ["య", "ya", "consonant"],
+  ["ర", "ra", "consonant"],
+  ["ల", "la", "consonant"],
+  ["వ", "va", "consonant"],
+  ["శ", "sha", "consonant"],
+  ["ష", "Sha", "consonant"],
+  ["స", "sa", "consonant"],
+  ["హ", "ha", "consonant"],
+  ["ళ", "La", "consonant"],
+  ["ఱ", "Ra", "consonant"],
+  ["అం", "aM", "sign"],
+  ["అః", "aH", "sign"],
+  ["క్ష", "kSha", "conjunct"],
+].map(([te, tr, kind]) => ({
+  te: te!,
+  tr: tr!,
+  kind: kind as LetterKind,
+  ...(audioFiles[te!] ? { audio: audioFiles[te!] } : {}),
+}));
 const W = (te: string, tr: string, en: string): Word => ({
   te,
   tr,
@@ -229,7 +267,7 @@ export const wordToMeaning = (w: Word, id: string, difficulty: Difficulty = "har
   answer: w.en,
   options: options(
     w.en,
-    WORDS.slice(0, 14).map((x) => x.en),
+    WORDS.map((x) => x.en),
     id,
   ),
 });
@@ -254,12 +292,16 @@ export const TOPICS: Topic[] = [
   {
     id: "vowels",
     name: "Vowels (అచ్చులు)",
-    build: () => LETTERS.slice(0, 12).map((l) => letterToSound(l, `vowels:${l.te}`)),
+    build: () =>
+      LETTERS.filter((l) => l.kind === "vowel").map((l) => letterToSound(l, `vowels:${l.te}`)),
   },
   {
     id: "consonants",
     name: "Consonants (హల్లులు)",
-    build: () => LETTERS.slice(12).map((l) => letterToSound(l, `consonants:${l.te}`)),
+    build: () =>
+      LETTERS.filter((l) => l.kind === "consonant").map((l) =>
+        letterToSound(l, `consonants:${l.te}`),
+      ),
   },
   {
     id: "find",
@@ -269,7 +311,7 @@ export const TOPICS: Topic[] = [
   {
     id: "words",
     name: "Word meanings",
-    build: () => WORDS.slice(0, 14).map((w) => wordToMeaning(w, `words:${w.te}`)),
+    build: () => WORDS.map((w) => wordToMeaning(w, `words:${w.te}`)),
   },
 ];
 

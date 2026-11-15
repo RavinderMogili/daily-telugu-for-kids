@@ -40,6 +40,30 @@ describe("picture vocabulary", () => {
   });
 });
 
+describe("letter catalogue", () => {
+  it("has unique entries with explicit kinds, not positional groups", () => {
+    expect(new Set(LETTERS.map((l) => l.te)).size).toBe(LETTERS.length);
+    for (const l of LETTERS) {
+      expect(["vowel", "consonant", "sign", "conjunct"]).toContain(l.kind);
+    }
+  });
+  it("covers the full standard consonant set and all independent vowels", () => {
+    for (const c of "ఖ ఘ ఙ ఛ ఝ ఞ ఠ ఢ ణ థ ధ ఫ భ శ ష స హ ళ ఱ".split(" ")) {
+      const l = LETTERS.find((x) => x.te === c);
+      expect(l, c).toBeDefined();
+      expect(l!.kind, c).toBe("consonant");
+    }
+    for (const v of "అ ఆ ఇ ఈ ఉ ఊ ఋ ఎ ఏ ఐ ఒ ఓ ఔ".split(" ")) {
+      const l = LETTERS.find((x) => x.te === v);
+      expect(l, v).toBeDefined();
+      expect(l!.kind, v).toBe("vowel");
+    }
+    // vowels identified by kind, not by position in the array
+    const vowels = LETTERS.filter((l) => l.kind === "vowel");
+    expect(vowels.some((l) => l.te === "ఋ")).toBe(true);
+  });
+});
+
 describe("pictureOptions", () => {
   it("returns unique options including the answer", () => {
     for (const p of PICTURE_WORDS) {

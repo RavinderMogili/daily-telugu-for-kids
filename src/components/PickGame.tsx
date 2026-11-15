@@ -36,7 +36,9 @@ export function PickGame({
     );
 
   const choose = (p: PictureWord) => {
-    if (picked === p.id) return;
+    // Once the correct answer is picked the item is settled: further taps
+    // on any option are ignored, so done can never count an item twice.
+    if (picked === p.id || picked === item.id) return;
     setPicked(p.id);
     const ok = p.id === item.id;
     if (ok) setDone((d) => d + 1);

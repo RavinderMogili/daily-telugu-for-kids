@@ -20,21 +20,40 @@ function Library() {
         <h2 className="mb-2 text-xl font-bold">
           Letters <span className="te">అక్షరాలు</span>
         </h2>
-        <p className="mb-2 text-sm text-muted-foreground">Tap a letter to trace it.</p>
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
-          {LETTERS.map((l) => (
-            <button
-              key={l.te}
-              onClick={() => setTrace(l.te)}
-              className="rounded-xl bg-muted p-2 text-center"
-            >
-              <div className="te text-4xl">{l.te}</div>
-              <div className="text-xs font-bold">{l.tr}</div>
-            </button>
-          ))}
-        </div>
+        <p className="mb-2 text-sm text-muted-foreground">Tap a letter to hear it and trace it.</p>
+        {(
+          [
+            ["vowel", "Vowels · అచ్చులు"],
+            ["consonant", "Consonants · హల్లులు"],
+            ["sign", "Signs · అం అః"],
+            ["conjunct", "Conjuncts · క్ష"],
+          ] as const
+        ).map(([kind, heading]) => (
+          <div key={kind} className="mb-3">
+            <p className="mb-1 text-xs font-bold text-muted-foreground">{heading}</p>
+            <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
+              {LETTERS.filter((l) => l.kind === kind).map((l) => (
+                <button
+                  key={l.te}
+                  onClick={() => setTrace(l.te)}
+                  aria-label={`Letter ${l.te}, ${l.tr}`}
+                  className={`rounded-xl p-2 text-center ${
+                    trace === l.te ? "bg-primary/15 ring-2 ring-primary" : "bg-muted"
+                  }`}
+                >
+                  <div className="te text-4xl">{l.te}</div>
+                  <div className="text-xs font-bold">{l.tr}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
         {trace && (
-          <div className="mt-4">
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center gap-3">
+              <span className="te text-4xl">{trace}</span>
+              <AudioButton src={LETTERS.find((l) => l.te === trace)?.audio} label="Listen" />
+            </div>
             <TraceCanvas key={trace} glyph={trace} />
           </div>
         )}
@@ -44,7 +63,7 @@ function Library() {
           Vocabulary <span className="te">పదాలు</span>
         </h2>
         <div className="grid gap-2 sm:grid-cols-2">
-          {WORDS.slice(0, 14).map((w) => (
+          {WORDS.map((w) => (
             <div key={w.te} className="flex items-center justify-between rounded-xl bg-muted p-2">
               <span>
                 <span className="te text-2xl">{w.te}</span>{" "}

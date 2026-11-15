@@ -33,7 +33,10 @@ export function AudioButton({
     <span className="inline-flex flex-col items-start">
       <button
         type="button"
-        onClick={() => setMissing(!playAudio(src))}
+        onClick={() => {
+          setMissing(false);
+          void playAudio(src).then((ok) => setMissing(!ok));
+        }}
         className="rounded-xl bg-secondary px-3 py-2 text-sm font-bold text-secondary-foreground"
       >
         🔊 {label}

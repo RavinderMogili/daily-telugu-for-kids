@@ -1,6 +1,6 @@
 # Feature status
 
-Updated 2026-11-15, branch `feature/picture-activities`.
+Updated 2026-11-15, branch `feature/content-improvements`.
 
 ## Baseline
 
@@ -9,7 +9,7 @@ Local-only: localStorage progress, no backend, no accounts.
 
 ## Implemented in this branch
 
-- Audio: `scripts/generate_audio.py` builds `public/audio/*.mp3` (66 clips,
+- Audio: `scripts/generate_audio.py` builds `public/audio/*.mp3` (99 clips,
   Microsoft neural Telugu voice via edge-tts, rate -15%) and
   `src/lib/audioManifest.ts`. Clips whose text already existed in the
   earlier pilot at D:\githubProjects\DailyTeluguLearning were copied;
@@ -24,7 +24,7 @@ Local-only: localStorage progress, no backend, no accounts.
   only పడవ is fully readable at strict L1. Activity cards show level
   badges (listen = L1 no-reading; picture-word = L1-L3; build = L2-L3)
   and `reading` is asserted by a test.
-- Audio review: `/audio-review` page lists all 66 clips with play, OK and
+- Audio review: `/audio-review` page lists all clips with play, OK and
   Flag buttons; marks persist in localStorage for parent review. Linked
   from My Progress.
 - Three activities on new route `/pictures` (nav: "Pictures"):
@@ -40,9 +40,32 @@ Local-only: localStorage progress, no backend, no accounts.
 - Keyboard: all controls are native buttons/selects (focusable,
   enter/space activatable); feedback uses aria-live.
 
+## Implemented in this branch (content audit follow-up)
+
+- Full alphabet catalogue: 52 entries — 13 independent vowels (incl. ఋ),
+  36 consonants (varnamala order incl. ఖ ఘ ఙ ఛ ఝ ఞ ఠ ఢ ణ థ ధ ఫ భ శ ష స హ
+  ళ ఱ), signs అం/అః, conjunct క్ష. Every entry carries an explicit
+  `kind`; practice topics filter by kind instead of array position.
+  Library groups letters by kind. Rare historical forms omitted pending
+  policy (see content.ts comment).
+- Audio coverage grew to 99 clips (33 new for the added letters).
+- Honest playback: `playAudio` is async and resolves false on missing
+  source, decode failure or blocked autoplay; AudioButton shows the
+  unavailable state only on actual failure.
+- Library shows all 20 words (the 14-word slice is gone) and letter
+  cards now offer Listen + Trace per letter.
+- Round-integrity fixes: PickGame ignores further taps once the correct
+  answer is settled (completion can no longer double-count); BuildWord
+  keeps `attempted` through Try again so a retried word never earns a
+  first-attempt point, and placed tiles can't be removed after
+  completion.
+- Not done yet (audit order): 80-word draft expansion, progressive units
+  beyond the 7-day L1 cycle, oral vs assisted vs independent reading
+  split, StoryWeaver/Vemana shortlist, stroke-order guides.
+
 ## Verification evidence
 
-- `bunx vitest run`: 12/12 pass (4 scoring + 7 picture/audio + 1
+- `bunx vitest run`: 14/14 pass (4 scoring + 9 catalogue/picture/audio + 1
   routing). New tests cover tiles-join-word integrity, option uniqueness,
   manifest coverage for every letter/word, difficulty annotation
   correctness, and no double-award on retry.
