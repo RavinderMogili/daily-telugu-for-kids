@@ -5,6 +5,7 @@ const NAV = [
   ["/", "Home"],
   ["/today", "Today"],
   ["/practice", "Practice"],
+  ["/pictures", "Pictures"],
   ["/progress", "My Progress"],
   ["/stars", "Stars"],
   ["/library", "Library"],

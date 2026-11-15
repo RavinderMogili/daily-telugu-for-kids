@@ -1,5 +1,6 @@
 import { QUIZ_RULES, type Difficulty } from "./config";
 import { addDays, daysBetween } from "./date";
+import { audioFiles } from "./audioManifest";
 
 export type Review = { status: "draft-needs-native-review" | "reviewed"; source: string };
 const ORIGINAL: Review = {
@@ -59,8 +60,13 @@ export const LETTERS: Letter[] = [
   ["ర", "ra"],
   ["ల", "la"],
   ["వ", "va"],
-].map(([te, tr]) => ({ te: te!, tr: tr! }));
-const W = (te: string, tr: string, en: string): Word => ({ te, tr, en });
+].map(([te, tr]) => ({ te: te!, tr: tr!, ...(audioFiles[te!] ? { audio: audioFiles[te!] } : {}) }));
+const W = (te: string, tr: string, en: string): Word => ({
+  te,
+  tr,
+  en,
+  ...(audioFiles[te] ? { audio: audioFiles[te] } : {}),
+});
 export const WORDS: Word[] = [
   W("అమ్మ", "amma", "mother"),
   W("ఆవు", "aavu", "cow"),
@@ -291,3 +297,60 @@ export const STORIES: Story[] = [
 /** Padyalu are listed only once their text and reuse details are verified. */
 export const PADYALU: Story[] = [];
 export const lookupWord = (t: string) => WORDS.find((w) => w.te === t.replace(/[.,!?]/g, ""));
+
+/**
+ * Small picture vocabulary for the visual activities on /pictures.
+ *
+ * emoji is a license-free stand-in illustration until original artwork is
+ * commissioned; it renders the same way on all devices and is the actual
+ * picture shown to the child. tiles is a REVIEWED array of Telugu
+ * akshara/syllable tiles (vowel signs and ottulu preserved) whose join
+ * must equal word.te — never derive tiles by splitting the string, that
+ * breaks conjuncts like ల్లు. skill names feed progress.skills.
+ */
+export type PictureWord = {
+  id: string;
+  word: Word;
+  emoji: string;
+  tiles: string[];
+  review: Review;
+};
+const P = (te: string, emoji: string, tiles: string[]): PictureWord => ({
+  id: `pic:${te}`,
+  word: WORDS.find((w) => w.te === te)!,
+  emoji,
+  tiles,
+  review: ORIGINAL,
+});
+export const PICTURE_WORDS: PictureWord[] = [
+  P("ఆవు", "🐄", ["ఆ", "వు"]),
+  P("ఇల్లు", "🏠", ["ఇ", "ల్లు"]),
+  P("ఎలుక", "🐭", ["ఎ", "లు", "క"]),
+  P("ఒంటె", "🐪", ["ఒం", "టె"]),
+  P("కలం", "🖊️", ["క", "లం"]),
+  P("గడియారం", "⏰", ["గ", "డి", "యా", "రం"]),
+  P("పాలు", "🥛", ["పా", "లు"]),
+  P("పడవ", "⛵", ["ప", "డ", "వ"]),
+];
+
+/** Distinct emoji options for picture-choice questions. */
+export function pictureOptions(answer: PictureWord, count = 4, seed = ""): PictureWord[] {
+  const others = shuffle(
+    PICTURE_WORDS.filter((p) => p.id !== answer.id),
+    seed + answer.id,
+  );
+  return shuffle([answer, ...others.slice(0, count - 1)], seed + answer.id + "o");
+}
+
+/**
+ * Tiles for Build the word: the reviewed tiles plus a few distractor tiles
+ * drawn from other picture words, shuffled. Joining the chosen tiles must
+ * reproduce the word exactly.
+ */
+export function buildTiles(p: PictureWord, seed = ""): string[] {
+  const distract = shuffle(
+    PICTURE_WORDS.filter((x) => x.id !== p.id).flatMap((x) => x.tiles),
+    seed + p.id,
+  ).filter((t) => !p.tiles.includes(t));
+  return shuffle([...p.tiles, ...distract.slice(0, 2)], seed + p.id + "t");
+}

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LibraryRouteImport } from './routes/library'
+import { Route as PicturesRouteImport } from './routes/pictures'
 import { Route as PracticeRouteImport } from './routes/practice'
 import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as ProgressRouteImport } from './routes/progress'
@@ -25,6 +26,11 @@ const IndexRoute = IndexRouteImport.update({
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PicturesRoute = PicturesRouteImport.update({
+  id: '/pictures',
+  path: '/pictures',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PracticeRoute = PracticeRouteImport.update({
@@ -56,6 +62,7 @@ const TodayRoute = TodayRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/library': typeof LibraryRoute
+  '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
   '/profiles': typeof ProfilesRoute
   '/progress': typeof ProgressRoute
@@ -65,6 +72,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/library': typeof LibraryRoute
+  '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
   '/profiles': typeof ProfilesRoute
   '/progress': typeof ProgressRoute
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/library': typeof LibraryRoute
+  '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
   '/profiles': typeof ProfilesRoute
   '/progress': typeof ProgressRoute
@@ -86,6 +95,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/library'
+    | '/pictures'
     | '/practice'
     | '/profiles'
     | '/progress'
@@ -95,6 +105,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/library'
+    | '/pictures'
     | '/practice'
     | '/profiles'
     | '/progress'
@@ -104,6 +115,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/library'
+    | '/pictures'
     | '/practice'
     | '/profiles'
     | '/progress'
@@ -114,6 +126,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LibraryRoute: typeof LibraryRoute
+  PicturesRoute: typeof PicturesRoute
   PracticeRoute: typeof PracticeRoute
   ProfilesRoute: typeof ProfilesRoute
   ProgressRoute: typeof ProgressRoute
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pictures': {
+      id: '/pictures'
+      path: '/pictures'
+      fullPath: '/pictures'
+      preLoaderRoute: typeof PicturesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/practice': {
@@ -178,6 +198,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LibraryRoute: LibraryRoute,
+  PicturesRoute: PicturesRoute,
   PracticeRoute: PracticeRoute,
   ProfilesRoute: ProfilesRoute,
   ProgressRoute: ProgressRoute,
