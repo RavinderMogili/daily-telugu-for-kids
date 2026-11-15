@@ -57,12 +57,13 @@ export function BuildWord({
         {i + 1}/{items.length}
       </p>
       <p className="mt-1 font-semibold">Build the Telugu word for this picture.</p>
-      <div
-        className="mx-auto my-4 grid min-h-32 place-items-center rounded-2xl bg-muted text-7xl"
-        role="img"
-        aria-label={`Picture of ${item.word.en}`}
-      >
-        {item.emoji}
+      <div className="mx-auto my-4 grid min-h-32 place-items-center rounded-2xl bg-muted">
+        <img
+          src={item.image}
+          alt={`Picture of ${item.word.en}`}
+          className="h-28 w-28 object-contain"
+          draggable={false}
+        />
       </div>
       <div className="mb-3 flex items-center justify-center gap-3">
         <span className="text-sm text-muted-foreground">{item.word.tr}</span>

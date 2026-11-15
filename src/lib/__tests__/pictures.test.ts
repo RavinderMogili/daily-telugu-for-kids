@@ -4,17 +4,26 @@ import { audioFiles } from "../audioManifest";
 import { awardPractice } from "../scoring";
 
 describe("picture vocabulary", () => {
-  it("every picture word has unique id, emoji, and tiles that join to the word", () => {
+  it("every picture word has unique id, image, and tiles that join to the word", () => {
     const ids = new Set<string>();
     for (const p of PICTURE_WORDS) {
       expect(p.word, p.id).toBeDefined();
       expect(ids.has(p.id)).toBe(false);
       ids.add(p.id);
-      expect(p.emoji.length).toBeGreaterThan(0);
+      expect(p.image, p.id).toMatch(/^\/pictures\/.+\.svg$/);
       // Reviewed tiles preserve vowel signs and conjuncts; they must
       // reconstruct the exact Telugu string.
       expect(p.tiles.join(""), p.id).toBe(p.word.te);
     }
+  });
+
+  it("difficulty annotation matches the tile forms (plain vs gunintha)", () => {
+    for (const p of PICTURE_WORDS) {
+      const plain = p.tiles.every((t) => t.length === 1);
+      expect(p.reading, p.id).toBe(plain ? "L1-plain" : "L3-gunintha");
+    }
+    // At least one word stays fully inside L1 letter knowledge.
+    expect(PICTURE_WORDS.some((p) => p.reading === "L1-plain")).toBe(true);
   });
 
   it("all words used in picture activities exist in WORDS with audio", () => {

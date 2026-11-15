@@ -126,6 +126,12 @@ function ProgressPage() {
           <p className="text-muted-foreground">Nothing saved yet.</p>
         )}
       </Card>
+      <Card className="text-sm">
+        <Link to="/audio-review" className="font-bold text-primary underline">
+          Parent tool: review the generated Telugu audio
+        </Link>{" "}
+        — listen to each clip and approve or flag pronunciation.
+      </Card>
     </div>
   );
 }

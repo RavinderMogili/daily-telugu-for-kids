@@ -59,12 +59,13 @@ export function PickGame({
       ) : (
         <div>
           <p className="mt-1 font-semibold">Which Telugu word matches the picture?</p>
-          <div
-            className="mx-auto my-4 grid min-h-32 place-items-center rounded-2xl bg-muted text-7xl"
-            role="img"
-            aria-label={`Picture of ${item.word.en}`}
-          >
-            {item.emoji}
+          <div className="mx-auto my-4 grid min-h-32 place-items-center rounded-2xl bg-muted">
+            <img
+              src={item.image}
+              alt={`Picture of ${item.word.en}`}
+              className="h-28 w-28 object-contain"
+              draggable={false}
+            />
           </div>
         </div>
       )}
@@ -82,12 +83,16 @@ export function PickGame({
             <button
               key={p.id}
               onClick={() => choose(p)}
-              aria-label={mode === "listen" ? `Picture: ${p.word.en}` : p.word.te}
-              className={`min-h-16 rounded-xl px-3 font-bold transition active:scale-95 ${state} ${
-                mode === "listen" ? "text-5xl" : "te text-4xl"
+              aria-label={mode === "listen" ? `Picture of ${p.word.en}` : p.word.te}
+              className={`grid min-h-20 place-items-center rounded-xl px-3 font-bold transition active:scale-95 ${state} ${
+                mode === "listen" ? "" : "te text-4xl"
               }`}
             >
-              {mode === "listen" ? p.emoji : p.word.te}
+              {mode === "listen" ? (
+                <img src={p.image} alt="" className="h-16 w-16 object-contain" draggable={false} />
+              ) : (
+                p.word.te
+              )}
             </button>
           );
         })}

@@ -301,36 +301,50 @@ export const lookupWord = (t: string) => WORDS.find((w) => w.te === t.replace(/[
 /**
  * Small picture vocabulary for the visual activities on /pictures.
  *
- * emoji is a license-free stand-in illustration until original artwork is
- * commissioned; it renders the same way on all devices and is the actual
- * picture shown to the child. tiles is a REVIEWED array of Telugu
- * akshara/syllable tiles (vowel signs and ottulu preserved) whose join
- * must equal word.te — never derive tiles by splitting the string, that
- * breaks conjuncts like ల్లు. skill names feed progress.skills.
+ * image is an original SVG illustration drawn for this app, stored in
+ * public/pictures/ (see docs/ASSETS.md). It renders identically on all
+ * devices and carries no visible label during questions.
+ * tiles is a REVIEWED array of Telugu akshara/syllable tiles (vowel
+ * signs and ottulu preserved) whose join must equal word.te — never
+ * derive tiles by splitting the string, that breaks conjuncts like ల్లు.
+ *
+ * reading flags prerequisite difficulty: "L1-plain" means every tile is a
+ * plain consonant/achchu readable at L1; "L3-gunintha" means the word
+ * needs vowel signs or ottulu that are only formally taught at L3, so the
+ * reading activities exceed strict L1 prerequisites (listening mode is
+ * still fine — it needs no reading). This is annotated per word, not
+ * inferred from correct spelling.
  */
 export type PictureWord = {
   id: string;
   word: Word;
-  emoji: string;
+  image: string;
   tiles: string[];
+  reading: "L1-plain" | "L3-gunintha";
   review: Review;
 };
-const P = (te: string, emoji: string, tiles: string[]): PictureWord => ({
+const P = (
+  te: string,
+  image: string,
+  tiles: string[],
+  reading: PictureWord["reading"],
+): PictureWord => ({
   id: `pic:${te}`,
   word: WORDS.find((w) => w.te === te)!,
-  emoji,
+  image,
   tiles,
+  reading,
   review: ORIGINAL,
 });
 export const PICTURE_WORDS: PictureWord[] = [
-  P("ఆవు", "🐄", ["ఆ", "వు"]),
-  P("ఇల్లు", "🏠", ["ఇ", "ల్లు"]),
-  P("ఎలుక", "🐭", ["ఎ", "లు", "క"]),
-  P("ఒంటె", "🐪", ["ఒం", "టె"]),
-  P("కలం", "🖊️", ["క", "లం"]),
-  P("గడియారం", "⏰", ["గ", "డి", "యా", "రం"]),
-  P("పాలు", "🥛", ["పా", "లు"]),
-  P("పడవ", "⛵", ["ప", "డ", "వ"]),
+  P("ఆవు", "/pictures/cow.svg", ["ఆ", "వు"], "L3-gunintha"),
+  P("ఇల్లు", "/pictures/house.svg", ["ఇ", "ల్లు"], "L3-gunintha"),
+  P("ఎలుక", "/pictures/mouse.svg", ["ఎ", "లు", "క"], "L3-gunintha"),
+  P("ఒంటె", "/pictures/camel.svg", ["ఒం", "టె"], "L3-gunintha"),
+  P("కలం", "/pictures/pen.svg", ["క", "లం"], "L3-gunintha"),
+  P("గడియారం", "/pictures/clock.svg", ["గ", "డి", "యా", "రం"], "L3-gunintha"),
+  P("పాలు", "/pictures/milk.svg", ["పా", "లు"], "L3-gunintha"),
+  P("పడవ", "/pictures/boat.svg", ["ప", "డ", "వ"], "L1-plain"),
 ];
 
 /** Distinct emoji options for picture-choice questions. */

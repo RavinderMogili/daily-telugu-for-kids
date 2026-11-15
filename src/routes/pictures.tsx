@@ -19,10 +19,29 @@ export const Route = createFileRoute("/pictures")({
   component: Pictures,
 });
 
+// Difficulty labels reflect what the activity actually demands, not just
+// correct spelling: most picture words use gunintha forms taught at L3,
+// so the reading activities exceed strict L1 prerequisites. See
+// PICTURE_WORDS[].reading in content.ts.
 const ACTIVITIES = [
-  { id: "listen", name: "Listen and choose", desc: "Hear a Telugu word, tap its picture" },
-  { id: "see", name: "Picture and word", desc: "See a picture, pick the Telugu word" },
-  { id: "build", name: "Build the word", desc: "Arrange Telugu tiles to spell the picture word" },
+  {
+    id: "listen",
+    name: "Listen and choose",
+    desc: "Hear a Telugu word, tap its picture",
+    level: "L1 - no reading needed",
+  },
+  {
+    id: "see",
+    name: "Picture and word",
+    desc: "See a picture, pick the Telugu word",
+    level: "L1-L3 - some words need vowel signs",
+  },
+  {
+    id: "build",
+    name: "Build the word",
+    desc: "Arrange Telugu tiles to spell the picture word",
+    level: "L2-L3 - includes gunintha tiles",
+  },
 ] as const;
 type ActivityId = (typeof ACTIVITIES)[number]["id"];
 
@@ -83,12 +102,16 @@ function Pictures() {
             >
               <span className="block text-lg font-bold">{a.name}</span>
               <span className="mt-1 block text-sm text-muted-foreground">{a.desc}</span>
+              <span className="mt-2 inline-block rounded-lg bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                {a.level}
+              </span>
             </button>
           ))}
         </div>
         <Card className="text-sm text-muted-foreground">
-          Pictures are simple emoji stand-ins until original artwork is added. Audio is a
-          computer-generated Telugu voice; recorded human audio is planned.
+          Pictures are original illustrations made for this app. Audio is a computer-generated
+          Telugu voice; recorded human audio is planned. Words with vowel signs (గుణింతం) are marked
+          L2-L3 because those forms are formally taught later.
         </Card>
       </div>
     );

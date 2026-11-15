@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AudioReviewRouteImport } from './routes/audio-review'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as PicturesRouteImport } from './routes/pictures'
 import { Route as PracticeRouteImport } from './routes/practice'
@@ -21,6 +22,11 @@ import { Route as TodayRouteImport } from './routes/today'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AudioReviewRoute = AudioReviewRouteImport.update({
+  id: '/audio-review',
+  path: '/audio-review',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LibraryRoute = LibraryRouteImport.update({
@@ -61,6 +67,7 @@ const TodayRoute = TodayRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/audio-review': typeof AudioReviewRoute
   '/library': typeof LibraryRoute
   '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
@@ -71,6 +78,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/audio-review': typeof AudioReviewRoute
   '/library': typeof LibraryRoute
   '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
@@ -82,6 +90,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/audio-review': typeof AudioReviewRoute
   '/library': typeof LibraryRoute
   '/pictures': typeof PicturesRoute
   '/practice': typeof PracticeRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/audio-review'
     | '/library'
     | '/pictures'
     | '/practice'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/audio-review'
     | '/library'
     | '/pictures'
     | '/practice'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/audio-review'
     | '/library'
     | '/pictures'
     | '/practice'
@@ -125,6 +137,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AudioReviewRoute: typeof AudioReviewRoute
   LibraryRoute: typeof LibraryRoute
   PicturesRoute: typeof PicturesRoute
   PracticeRoute: typeof PracticeRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audio-review': {
+      id: '/audio-review'
+      path: '/audio-review'
+      fullPath: '/audio-review'
+      preLoaderRoute: typeof AudioReviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/library': {
@@ -197,6 +217,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AudioReviewRoute: AudioReviewRoute,
   LibraryRoute: LibraryRoute,
   PicturesRoute: PicturesRoute,
   PracticeRoute: PracticeRoute,
