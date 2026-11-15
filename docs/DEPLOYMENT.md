@@ -2,31 +2,40 @@
 
 Updated 2026-11-15.
 
-## Current build target
+## Build setup
 
-`bun run build` produces a nitro server bundle plus static assets under
-`.output/`:
+Standard TanStack Start + Nitro (`vite.config.ts`): tailwind, tsconfig
+paths, `tanstackStart` (custom server entry `src/server.ts`), `nitro()`
+from `nitro/vite`, `@vitejs/plugin-react`. No deploy preset is forced —
+Nitro auto-detects the target.
 
-- `.output/public/` - static assets (pages, audio, css)
-- `.output/server/` - nitro server (Cloudflare-targeted default; the
-  the vite config injects nitro with a Cloudflare worker target and
-  generates `.output/server/wrangler.json` + `.wrangler/deploy/config.json`)
+- Local `bun run build` → `node-server` preset, `.output/` (`.output/server/index.mjs`
+  runs standalone: `node .output/server/index.mjs`)
+- On Vercel → Nitro's `vercel` preset is selected automatically; no
+  `vercel.json` needed for the default setup.
+- Dev server runs on port 8080.
 
-So the export is wired for Cloudflare Workers/Pages style deployment, or
-`npx vite preview` / `npx nitro deploy --prebuilt`.
+## Vercel settings
 
-## Remaining work for Vercel
+- Framework preset: **TanStack Start** (or Nitro)
+- Install command: `bun install` (Bun; `bun.lock` committed)
+- Build command: `bun run build`
+- Output: auto-detected from the nitro build — leave defaults.
+- Environment variables: none required. The app is fully local
+  (localStorage progress, committed audio/pictures, no backend, no API keys).
 
-The project does NOT deploy to Vercel as-is:
+## Verified locally (chore/remove-lovable-build-config)
 
-- No `vercel.json` and no Vercel preset is configured; nitro defaults to
-  Cloudflare. Options: (a) deploy the Cloudflare build as intended by the
-  template, or (b) configure nitro for a Vercel/Node preset and add a
-  `vercel.json`, then verify SSR routes work.
-- Decide hosting first (Cloudflare vs Vercel) before paying for anything.
-- Whichever host: point it at this repo, `bun install`, `bun run build`.
-- No custom domain configured. `public/robots.txt` exists; og/share image
-  is still absent (deliberately - root comment warns not to inherit one).
+- `bun run build` passes; nitro preset `node-server`, no Cloudflare output.
+- `node .output/server/index.mjs`: /, /pictures, /audio-review, /today
+  SSR-render 200; `/audio/*.mp3` served.
+- 28/28 browser checks (desktop + mobile, audio, games, review marks,
+  duplicate-reward guard); 12/12 unit tests; tsc clean; lint 0 errors.
+
+Actual live deployment to Vercel is **not yet verified** — import the repo
+and deploy when ready. Vercel's "Imported from Lovable" project label is a
+Vercel-side project origin tag; removing the dependency from this code does
+not rename the project there.
 
 ## Cost
 
