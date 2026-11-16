@@ -9,6 +9,7 @@ Requires: pip install edge-tts
 """
 
 import asyncio
+import hashlib
 import re
 import shutil
 from pathlib import Path
@@ -54,7 +55,10 @@ async def generate(strings: list[str]) -> dict[str, str]:
     old = old_manifest()
     mapping: dict[str, str] = {}
     for i, s in enumerate(strings):
-        name = f"a{i:03d}.mp3"
+        # Content-addressed name: inserting a string must not shift the
+        # filenames of others (a positional index previously made clips
+        # play the wrong text after list edits).
+        name = f"a{hashlib.sha256(s.encode('utf-8')).hexdigest()[:8]}.mp3"
         dest = OUT_DIR / name
         old_rel = old.get(s)
         if old_rel and (OLD_AUDIO.parent / old_rel.lstrip("/")).exists():
