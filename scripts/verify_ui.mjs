@@ -1,6 +1,7 @@
 // Manual verification script for the picture activities.
-// Requires the dev server running on :8080 and playwright + chromium.
+// Requires the dev server running and playwright + chromium.
 // Usage: bun run dev &  then  node scripts/verify_ui.mjs
+// Defaults to :8080; override with UI_BASE=http://localhost:8081
 // Captures screenshots into shots/ and prints a checklist result.
 // "mobile" contexts use a real touchscreen (hasTouch) so taps go through
 // the same code paths as a phone.
@@ -8,7 +9,7 @@
 import { chromium } from "playwright";
 import { mkdirSync } from "node:fs";
 
-const BASE = "http://localhost:8080";
+const BASE = process.env.UI_BASE || "http://localhost:8080";
 const shots = "shots";
 mkdirSync(shots, { recursive: true });
 

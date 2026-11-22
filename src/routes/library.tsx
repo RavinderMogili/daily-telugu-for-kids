@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { LETTERS, WORDS, STORIES, PADYALU, type Story } from "@/lib/content";
+import { LETTERS, WORDS, WORD_GROUPS, STORIES, PADYALU, type Story } from "@/lib/content";
 import { LEVELS } from "@/lib/levels";
 import { AudioButton, Btn, Card } from "@/components/ui-kit";
 import { WordChip } from "@/components/WordChip";
@@ -62,19 +62,27 @@ function Library() {
         <h2 className="mb-2 text-xl font-bold">
           Vocabulary <span className="te">పదాలు</span>
         </h2>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {WORDS.map((w) => (
-            <div key={w.te} className="flex items-center justify-between rounded-xl bg-muted p-2">
-              <span>
-                <span className="te text-2xl">{w.te}</span>{" "}
-                <span className="text-sm">
-                  {w.tr} · {w.en}
-                </span>
-              </span>
-              <AudioButton src={w.audio} label="" />
+        {WORD_GROUPS.map((g) => (
+          <div key={g.id} className="mb-3">
+            <p className="mb-1 text-xs font-bold text-muted-foreground">{g.name}</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {WORDS.filter((w) => w.group === g.id).map((w) => (
+                <div
+                  key={w.te}
+                  className="flex items-center justify-between rounded-xl bg-muted p-2"
+                >
+                  <span>
+                    <span className="te text-2xl">{w.te}</span>{" "}
+                    <span className="text-sm">
+                      {w.tr} · {w.en}
+                    </span>
+                  </span>
+                  <AudioButton src={w.audio} label="" />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </Card>
       <Card>
         <h2 className="mb-2 text-xl font-bold">

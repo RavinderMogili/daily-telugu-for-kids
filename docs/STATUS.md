@@ -9,7 +9,7 @@ Local-only: localStorage progress, no backend, no accounts.
 
 ## Implemented in this branch
 
-- Audio: `scripts/generate_audio.py` builds `public/audio/*.mp3` (99 clips,
+- Audio: `scripts/generate_audio.py` builds `public/audio/*.mp3` (172 clips,
   Microsoft neural Telugu voice via edge-tts, rate -15%) and
   `src/lib/audioManifest.ts`. Clips whose text already existed in the
   earlier pilot at D:\githubProjects\DailyTeluguLearning were copied;
@@ -52,14 +52,19 @@ Local-only: localStorage progress, no backend, no accounts.
 - Honest playback: `playAudio` is async and resolves false on missing
   source, decode failure or blocked autoplay; AudioButton shows the
   unavailable state only on actual failure.
-- Library shows all 20 words (the 14-word slice is gone) and letter
-  cards now offer Listen + Trace per letter.
+- Library shows all words grouped by theme (family, home, food, school,
+  animals, outdoors, actions, body, everyday) and letter cards offer
+  Listen + Trace per letter. WORDS grew to 103 entries following the
+  audit's draft list; every word carries `group` + `review` metadata and
+  all remain draft-needs-native-review (transliterations included).
+- Audio filenames are content-hashed (`a<hash>.mp3`) so content edits can
+  never remap a clip to the wrong text.
 - Round-integrity fixes: PickGame ignores further taps once the correct
   answer is settled (completion can no longer double-count); BuildWord
   keeps `attempted` through Try again so a retried word never earns a
   first-attempt point, and placed tiles can't be removed after
   completion.
-- Not done yet (audit order): 80-word draft expansion, progressive units
+- Not done yet (audit order): progressive units
   beyond the 7-day L1 cycle, oral vs assisted vs independent reading
   split, StoryWeaver/Vemana shortlist, stroke-order guides.
 

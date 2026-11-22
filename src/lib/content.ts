@@ -9,7 +9,16 @@ const ORIGINAL: Review = {
 };
 export type LetterKind = "vowel" | "consonant" | "sign" | "conjunct";
 export type Letter = { te: string; tr: string; kind: LetterKind; audio?: string };
-export type Word = { te: string; tr: string; en: string; audio?: string };
+export type WordGroup =
+  "family" | "home" | "food" | "school" | "animals" | "outdoors" | "actions" | "body" | "everyday";
+export type Word = {
+  te: string;
+  tr: string;
+  en: string;
+  group: WordGroup;
+  review: Review;
+  audio?: string;
+};
 export type Day = {
   day: number;
   level: "L1";
@@ -99,33 +108,135 @@ export const LETTERS: Letter[] = [
   kind: kind as LetterKind,
   ...(audioFiles[te!] ? { audio: audioFiles[te!] } : {}),
 }));
-const W = (te: string, tr: string, en: string): Word => ({
+const W = (te: string, tr: string, en: string, group: WordGroup): Word => ({
   te,
   tr,
   en,
+  group,
+  review: ORIGINAL,
   ...(audioFiles[te] ? { audio: audioFiles[te] } : {}),
 });
+/**
+ * Vocabulary grouped by theme (family, home, food, ...). Draft entries
+ * follow the content-audit proposal; ALL are draft-needs-native-review —
+ * spelling choices, meanings and transliterations need a Telugu speaker's
+ * pass before being treated as approved. Grouping is display/metadata
+ * only; days reference words by te.
+ */
 export const WORDS: Word[] = [
-  W("అమ్మ", "amma", "mother"),
-  W("ఆవు", "aavu", "cow"),
-  W("ఇల్లు", "illu", "house"),
-  W("ఊరు", "ooru", "village"),
-  W("ఎలుక", "eluka", "mouse"),
-  W("ఒంటె", "onTe", "camel"),
-  W("కలం", "kalam", "pen"),
-  W("గడియారం", "gaDiyaaram", "clock"),
-  W("తల", "tala", "head"),
-  W("దండ", "danDa", "garland"),
-  W("నాన్న", "naanna", "father"),
-  W("పాలు", "paalu", "milk"),
-  W("పడవ", "paDava", "boat"),
-  W("వల", "vala", "net"),
-  W("ఇది", "idi", "this"),
-  W("ఒక", "oka", "a / one"),
-  W("ఇస్తుంది", "istundi", "gives"),
-  W("తెస్తుంది", "testundi", "brings"),
-  W("నేను", "neenu", "I"),
-  W("తాగుతాను", "taagutaanu", "(I) drink"),
+  // family
+  W("అమ్మ", "amma", "mother", "family"),
+  W("నాన్న", "naanna", "father", "family"),
+  W("అక్క", "akka", "older sister", "family"),
+  W("అన్న", "anna", "older brother", "family"),
+  W("తమ్ముడు", "tammudu", "younger brother", "family"),
+  W("చెల్లి", "chelli", "younger sister", "family"),
+  W("తాత", "taata", "grandfather", "family"),
+  W("అమ్మమ్మ", "ammamma", "grandmother (mother's side)", "family"),
+  W("నానమ్మ", "naanamma", "grandmother (father's side)", "family"),
+  W("కుటుంబం", "kutumbam", "family", "family"),
+  // home
+  W("ఇల్లు", "illu", "house", "home"),
+  W("తలుపు", "talupu", "door", "home"),
+  W("గది", "gadi", "room", "home"),
+  W("కిటికీ", "kitikee", "window", "home"),
+  W("మంచం", "mancham", "bed", "home"),
+  W("బల్ల", "balla", "table", "home"),
+  W("కుర్చీ", "kurchee", "chair", "home"),
+  W("గిన్నె", "ginne", "bowl", "home"),
+  W("గ్లాసు", "glaasu", "drinking glass", "home"),
+  W("దీపం", "deepam", "lamp", "home"),
+  W("గడియారం", "gaDiyaaram", "clock", "home"),
+  // food and drink
+  W("నీళ్లు", "neeLLu", "water", "food"),
+  W("పాలు", "paalu", "milk", "food"),
+  W("అన్నం", "annam", "cooked rice", "food"),
+  W("పప్పు", "pappu", "dal", "food"),
+  W("రొట్టె", "rotTe", "flatbread", "food"),
+  W("పండు", "pandu", "fruit", "food"),
+  W("అరటిపండు", "araTipaNdu", "banana", "food"),
+  W("కూర", "kuura", "vegetable dish", "food"),
+  W("ఉప్పు", "uppu", "salt", "food"),
+  W("పెరుగు", "perugu", "curd / yogurt", "food"),
+  // school and play
+  W("బడి", "baDi", "school", "school"),
+  W("పుస్తకం", "pustakam", "book", "school"),
+  W("కలం", "kalam", "pen", "school"),
+  W("పలక", "palaka", "slate", "school"),
+  W("సంచి", "sanchi", "bag", "school"),
+  W("తరగతి", "taragati", "class", "school"),
+  W("గురువు", "guruvu", "teacher", "school"),
+  W("గంట", "ganTa", "bell", "school"),
+  W("ఆట", "aaTa", "game / play", "school"),
+  W("పాట", "paaTa", "song", "school"),
+  // animals
+  W("ఆవు", "aavu", "cow", "animals"),
+  W("ఎలుక", "eluka", "mouse", "animals"),
+  W("ఒంటె", "onTe", "camel", "animals"),
+  W("కుక్క", "kukka", "dog", "animals"),
+  W("పిల్లి", "pilli", "cat", "animals"),
+  W("మేక", "meeka", "goat", "animals"),
+  W("ఏనుగు", "eenugu", "elephant", "animals"),
+  W("పిట్ట", "pitta", "bird", "animals"),
+  W("చేప", "chepa", "fish", "animals"),
+  W("గుర్రం", "gurram", "horse", "animals"),
+  W("కోతి", "kothi", "monkey", "animals"),
+  W("కుందేలు", "kundeelu", "rabbit", "animals"),
+  // outdoors and weather
+  W("చెట్టు", "chettu", "tree", "outdoors"),
+  W("ఆకు", "aaku", "leaf", "outdoors"),
+  W("పువ్వు", "puvvu", "flower", "outdoors"),
+  W("వాన", "vaana", "rain", "outdoors"),
+  W("మంచు", "manchu", "snow / frost", "outdoors"),
+  W("గాలి", "gaali", "wind / air", "outdoors"),
+  W("సూర్యుడు", "suuryudu", "sun", "outdoors"),
+  W("చంద్రుడు", "chandrudu", "moon", "outdoors"),
+  W("మేఘం", "megham", "cloud", "outdoors"),
+  W("నది", "nadi", "river", "outdoors"),
+  W("పడవ", "paDava", "boat", "outdoors"),
+  W("దండ", "danDa", "garland", "outdoors"),
+  W("వల", "vala", "net", "outdoors"),
+  W("ఊరు", "ooru", "village", "outdoors"),
+  // actions (command forms)
+  W("రా", "raa", "come!", "actions"),
+  W("వెళ్లు", "veLLu", "go!", "actions"),
+  W("చూడు", "chuuDu", "look!", "actions"),
+  W("విను", "vinu", "listen!", "actions"),
+  W("చదువు", "chaduvu", "read!", "actions"),
+  W("రాయి", "raayi", "write!", "actions"),
+  W("తిను", "tinu", "eat!", "actions"),
+  W("తాగు", "taagu", "drink!", "actions"),
+  W("ఆడు", "aaDu", "play!", "actions"),
+  W("పాడు", "paaDu", "sing!", "actions"),
+  // body
+  W("తల", "tala", "head", "body"),
+  W("కన్ను", "kannu", "eye", "body"),
+  W("చెవి", "chevi", "ear", "body"),
+  W("ముక్కు", "mukku", "nose", "body"),
+  W("నోరు", "nooru", "mouth", "body"),
+  W("చేయి", "cheyi", "hand", "body"),
+  W("కాలు", "kaalu", "leg / foot", "body"),
+  W("జుట్టు", "jutTu", "hair", "body"),
+  W("పన్ను", "pannu", "tooth", "body"),
+  W("వేలు", "veelu", "finger", "body"),
+  // everyday sentence words (used by the L1 story)
+  W("ఇది", "idi", "this", "everyday"),
+  W("ఒక", "oka", "a / one", "everyday"),
+  W("నేను", "neenu", "I", "everyday"),
+  W("ఇస్తుంది", "istundi", "gives", "everyday"),
+  W("తెస్తుంది", "testundi", "brings", "everyday"),
+  W("తాగుతాను", "taagutaanu", "(I) drink", "everyday"),
+];
+export const WORD_GROUPS: { id: WordGroup; name: string }[] = [
+  { id: "family", name: "Family" },
+  { id: "home", name: "Home" },
+  { id: "food", name: "Food & drink" },
+  { id: "school", name: "School & play" },
+  { id: "animals", name: "Animals" },
+  { id: "outdoors", name: "Outdoors & weather" },
+  { id: "actions", name: "Action words" },
+  { id: "body", name: "Body" },
+  { id: "everyday", name: "Everyday words" },
 ];
 const lt = (s: string) => s.split(" ").map((t) => LETTERS.find((l) => l.te === t)!);
 const wd = (s: string) => s.split(" ").map((t) => WORDS.find((w) => w.te === t)!);
